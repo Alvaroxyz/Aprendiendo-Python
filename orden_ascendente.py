@@ -2,7 +2,7 @@
 
 #pedir una cantidad n de números enteros e imprimirlos en orden ascendente
 
-cant=int(input("¿Cuántos números va a escribir?"))
+cant=int(input("¿Cuántos números va a escribir? "))
 
 lista=[]
 

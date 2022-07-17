@@ -4,7 +4,6 @@ print(nombre, apellido)
 
 #creamos una función que repite dos veces
 
-
 def print_twice(alvaro):
     print(alvaro)
     print(alvaro)
