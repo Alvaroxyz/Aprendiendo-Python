@@ -7,14 +7,15 @@
 m=int(input('Cual sucesion quiere: '))
 
 
-sucesor_a=m
-i=2
 
+i=2
+sucesor_a=m
 
 tope=1000
 
 no_especial=0
 t=1
+
 
 while t<=m:
     k=1
