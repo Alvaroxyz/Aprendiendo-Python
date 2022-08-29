@@ -1,83 +1,61 @@
-import numpy as np 
+import numpy as np  
 import matplotlib.pyplot as plt 
 
 
 #Funciones
 
-def dimKA(A, k, sh, sv):
-    """Calcula las filas y las columnas de KA y retorna una tupla con los datos."""
-    dk = k.shape[0]
-    dim_c = int(np.floor(((A.shape[1]-dk)/sh)+1))
-    dim_f = int(np.floor(((A.shape[0]-dk)/sv)+1))
-    r = (dim_f, dim_c)
+def dimensiones_convolucion(A, k, sh, sv):
+    """Calcula las filas y las columnas de KA 
+    y retorna una lista con los datos."""
+    dk = k.shape
+    dim_c = int(np.floor(((A.shape[1]-dk[1])/sh)+1))
+    dim_f = int(np.floor(((A.shape[0]-dk[0])/sv)+1))
+    r = [dim_f, dim_c]
     return r
 
-def mA(A,k,sh,sv):
-    """Parcela una capa y retorna la matriz de matrices para multiplicar por el kernel."""
-    dk = k.shape
-    d = dimKA(A,k, sh, sv)
-    B = np.zeros(d,dtype=ndarray)
-    for i in range(d[0]+1):
-        for j in range(d[1]+1):
-            B[i,j] = np.array(A[i*sh:dk[0]+1,j*sv:dk[1]+1])
+
+def convolucion_capa(A,k,sh,sv):
+    """Toma una capa y entrega la convolución con el kernel
+    """
+    dk = k.shape 
+    d = dimensiones_convolucion(A,k,sh,sv)
+    B = np.zeros(d)
+    for i in range(d[0]):
+        for j in range(d[1]):
+            B[i,j] = sum(sum(A[i*sv:i*sv+dk[1],j*sh:j*sh+dk[0]]*k))
     return B
 
-def mcon(B,k):
-    """Calcula el producto tensorial de cada entrada de la convolución
-    de una capa con el kerenel y retorna la capa con los productos 
-    en cada entrada.
-    """
-    t = B.shape
-    for i in range(t[0]+1):
-        for j in range(t[1]+1):
-            #producto tensorial
-            B[i,j] = sum(B[i,j]*k)
-    return B
 
-def conv(cA, k,sh,sv):
-    """Cálculo directo de la convolución para un canal de A digamos cA
-    a partir de A, k, sh, sv.
-    """
-    v0 = mA(cA,k,sh,sv)
-    v1 = mcon(v0,k)
-    return v1
+def ensambla_convolucion_canales(canal_1,canal_2,canal_3):
+    """Ensambla cada uno de los canales una vez hecha la convolución
+    para cada uno de ellos"""
+    d = canal_1.shape
+    KA = np.zeros((d[0],d[1],3))
+    for i in range(d[0]):
+        for j in range(d[1]):
+            KA[i,j] = np.array([canal_1[i,j],canal_2[i,j],canal_3[i,j]])
+    return KA
 
-def KA(B1, B2, B3):
-    """ Ensambla los tres canales ya hecha la convolución"""
-    Ka = np.array([B1,B2,B3])
-    return Ka
-
-def img2(A,k,sh,sv):
-    A0 = A[:,:,0]
-    A1 = A[:,:,1]
-    A2 = A[:,:,2]
-
-    B0 = conv(A0,k,sh,sv)
-    B1 = conv(A1,k,sh,sv)
-    B2 = conv(A2,k,sh,sv)
-
-    sol = KA(B0,B1,B2)
-    return sol
 
 
 #Instrucciones
 
-marilyn = plt.imread('./Archivos/marilyn.png')
-
-
-
-
-
+A = plt.imread('./Archivos/marilyn.png')
 
 kh = np.array([[1,1,1],[0,0,0],[-1,-1,-1]])
 kv = np.array([[1,0,-1],[1,0,-1],[1,0,-1]])
 kl = np.array([[-1,-1,-1],[-1,8,-1],[-1,-1,-1]])
 kb = (-1/9)*np.ones((3,3))
 
-k = kh
+k = kl
 sh = 1
 sv = 1
-#sh = int(input('Sancada horizontal: '))
-#sv = int(input('Sancada vertical: '))
 
+c1 = convolucion_capa(A[:,:,0], k, sh, sv)
+c2 = convolucion_capa(A[:,:,1], k, sh, sv)
+c3 = convolucion_capa(A[:,:,2], k, sh, sv)
 
+ka = ensambla_convolucion_canales(c1, c2, c3)
+
+plt.imshow(ka)
+plt.show()
