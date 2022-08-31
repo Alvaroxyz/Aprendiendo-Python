@@ -40,14 +40,15 @@ def ensambla_convolucion_canales(canal_1,canal_2,canal_3):
 
 #Instrucciones
 
-A = plt.imread('./Archivos/marilyn.png')
+A = plt.imread('./Archivos/marilyn_2.png')
+#A = plt.imread('./Archivos/perro.png')
 
 kh = np.array([[1,1,1],[0,0,0],[-1,-1,-1]])
 kv = np.array([[1,0,-1],[1,0,-1],[1,0,-1]])
 kl = np.array([[-1,-1,-1],[-1,8,-1],[-1,-1,-1]])
 kb = (-1/9)*np.ones((3,3))
 
-k = kl
+k = kb
 sh = 1
 sv = 1
 
